@@ -40,13 +40,11 @@ const User = sequelize.define('User', {
   timestamps: true,
 });
 
-// Hook para hashear la contraseña antes de crear un usuario
 User.beforeCreate(async (user) => {
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
 });
 
-// Método de instancia para comparar contraseñas
 User.prototype.comparePassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
