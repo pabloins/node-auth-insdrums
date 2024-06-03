@@ -1,6 +1,42 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
+const passport = require("passport");
+const OIDCStrategy = require("passport-azure-ad").OIDCStrategy;
+
 const secretKey = process.env.SECRET_KEY;
+
+const options = {
+  identityMetadata: `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/v2.0/.well-known/openid-configuration`,
+  clientID: process.env.AZURE_AD_CLIENT_ID,
+  clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+  responseType: "code",
+  responseMode: "query",
+  redirectUrl: "http://localhost:8080/api/v1/auth/openid/return",
+  allowHttpForRedirectUrl: true,
+  passReqToCallback: false,
+  scope: ["profile", "offline_access", "https://graph.microsoft.com/mail.read"],
+};
+
+passport.use(new OIDCStrategy(options, (iss, sub, profile, accessToken, refreshToken, done) => {
+  if (!profile.oid) return done(new Error("No OID found"), null);
+
+  return done(null, profile);
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+
+const initializePassport = () => {
+  return [
+    passport.initialize(),
+    passport.session(),
+  ];
+};
 
 const login = async (username, password) => {
   try {
@@ -27,4 +63,4 @@ const login = async (username, password) => {
   }
 };
 
-module.exports = { login };
+module.exports = { initializePassport, login };
