@@ -13,6 +13,10 @@ const User = sequelize.define('User', {
     allowNull: false,
     unique: true,
   },
+  avatar: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -25,11 +29,11 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  // role: {
-  //   type: DataTypes.ENUM('admin', 'customer', 'client'),
-  //   allowNull: false,
-  //   defaultValue: 'client',
-  // },
+  role: {
+    type: DataTypes.ENUM('admin', 'customer', 'client'),
+    allowNull: false,
+    defaultValue: 'client',
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,

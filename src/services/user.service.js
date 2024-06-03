@@ -38,6 +38,26 @@ const createNewUser = async (userData) => {
   }
 };
 
+// Create user azure
+const createNewUserAzure = async (profile) => {
+  try {
+    let user = await User.findOne({
+      where: { id: profile.id }
+    });
+
+    if(!user) {
+      user = await User.create({
+        oid: profile.oid,
+        username: profile.displayName,
+        email: profile._json.email,
+      })
+    }
+  } catch (error) {
+    console.error('Error during user registration:', error);
+    throw new Error('Error during user registration: ' + error.message);
+  }
+};
+
 // update user data
 const updateOneUser = async (userId, updateData) => {
   try {
@@ -72,6 +92,7 @@ module.exports = {
   getAllUsers,
   getOneUser,
   createNewUser,
+  createNewUserAzure,
   updateOneUser,
   deleteOneUser,
 };
